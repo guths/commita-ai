@@ -1,21 +1,28 @@
 package config
 
 import (
-	"log"
 	"os"
+	"path/filepath"
 
-	"github.com/joho/godotenv"
+	"gopkg.in/yaml.v3"
 )
 
-func LoadEnv() {
-	if err := godotenv.Load(); err != nil {
-		log.Println("No .env file found, using system environment variables")
-	}
+type Config struct {
+	APIKey string `yaml:"api_key"`
 }
 
-func GetEnv(key string, fallback string) string {
-	if value, exists := os.LookupEnv(key); exists {
-		return value
+func getConfigPath() string {
+	home, _ := os.UserHomeDir()
+	return filepath.Join(home, ".config", "mycli", "config.yaml")
+}
+
+func GetAPIKey() string {
+	path := getConfigPath()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		return ""
 	}
-	return fallback
+	var cfg Config
+	yaml.Unmarshal(data, &cfg)
+	return cfg.APIKey
 }

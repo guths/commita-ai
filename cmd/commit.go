@@ -10,7 +10,6 @@ import (
 	"github.com/guths/commita-ai/core/service"
 	"github.com/guths/commita-ai/core/usecase"
 	"github.com/guths/commita-ai/internal/adapter"
-	"github.com/guths/commita-ai/internal/config"
 	"github.com/spf13/cobra"
 )
 
@@ -92,7 +91,6 @@ var cliCmd = &cobra.Command{
 }
 
 func init() {
-	config.LoadEnv()
 	rootCmd.AddCommand(cliCmd)
 	cliCmd.Flags().StringVarP((*string)(&commitType), "type", "t", string(service.CommitTypeFeat), "commit conventional")
 	cliCmd.Flags().StringVarP(&customMessage, "message", "m", customMessage, "commit conventional")

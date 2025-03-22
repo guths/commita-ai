@@ -19,7 +19,7 @@ type openAiClient struct {
 
 func NewOpenAiClient() *openAiClient {
 	return &openAiClient{
-		apiKey:     config.GetEnv("OPENAI_API_KEY", ""),
+		apiKey:     config.GetAPIKey(),
 		httpClient: &http.Client{Timeout: 30 * time.Second},
 	}
 }
