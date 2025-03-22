@@ -8,12 +8,12 @@ import (
 )
 
 type Config struct {
-	APIKey string `yaml:"api_key"`
+	APIKey string `yaml:"open_api_key"`
 }
 
 func getConfigPath() string {
 	home, _ := os.UserHomeDir()
-	return filepath.Join(home, ".config", "mycli", "config.yaml")
+	return filepath.Join(home, ".config", "commitaai", "config.yaml")
 }
 
 func GetAPIKey() string {
