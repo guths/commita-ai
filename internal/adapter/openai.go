@@ -66,6 +66,7 @@ func (c *openAiClient) ChatCompletion(ctx context.Context, prompt string, data [
 	}
 
 	req, err := http.NewRequestWithContext(ctx, "POST", url, bytes.NewBuffer(body))
+
 	if err != nil {
 		return "", err
 	}

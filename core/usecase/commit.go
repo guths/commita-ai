@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/guths/commita-ai/core/port"
+	"github.com/guths/commita-ai/core/service"
 )
 
 type Summarize struct {
@@ -19,7 +20,7 @@ func NewSummarize(ctx context.Context, port port.AiClient) *Summarize {
 	}
 }
 
-func (c *Summarize) Create(stagedChanges []byte) (string, error) {
+func (c *Summarize) Create(commitType service.CommitType, stagedChanges []byte) (string, error) {
 	res, err := c.aiApi.ChatCompletion(c.ctx, "Summarize this commit diff using min tokens possible, use bullet points", stagedChanges)
 
 	if err != nil {
