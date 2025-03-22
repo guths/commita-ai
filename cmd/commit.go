@@ -3,6 +3,7 @@ package cmd
 import (
 	"context"
 	"fmt"
+	"os"
 	"time"
 
 	"github.com/briandowns/spinner"
@@ -16,6 +17,7 @@ import (
 var commitUseCase *usecase.Summarize
 var git *service.Git
 var commitType service.CommitType
+var customMessage string
 
 func GetCommitMessage(commitType service.CommitType, summary string) string {
 	switch commitType {
@@ -40,12 +42,30 @@ var cliCmd = &cobra.Command{
 	Long:  `Commit`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if !service.IsValidCommitType(string(commitType)) {
-			panic("Invalid commit type")
+			fmt.Println("Error: Invalid commit type")
+			os.Exit(1)
 		}
-		diff, err := git.Diff()
 
+		err := git.DiffTest()
 		if err != nil {
-			panic(err)
+			fmt.Printf("Error: %v\n", err)
+			os.Exit(1)
+		}
+
+		if customMessage != "" {
+			message := GetCommitMessage(commitType, customMessage)
+
+			err = git.Commit(message)
+			if err != nil {
+				fmt.Printf("Error: %v\n", err)
+				os.Exit(1)
+			}
+		}
+
+		diff, err := git.Diff()
+		if err != nil {
+			fmt.Printf("Error: %v\n", err)
+			os.Exit(1)
 		}
 
 		s := spinner.New(spinner.CharSets[14], 100*time.Millisecond)
@@ -53,20 +73,19 @@ var cliCmd = &cobra.Command{
 		s.Suffix = " Summarizing changes... \n"
 
 		summary, err := commitUseCase.Create(commitType, diff)
-
 		s.Stop()
 
 		if err != nil {
-			panic(err)
+			fmt.Printf("Error: %v\n", err)
+			os.Exit(1)
 		}
 
 		message := GetCommitMessage(commitType, summary)
 
 		err = git.Commit(message)
-
 		if err != nil {
-			fmt.Println("ERRRROOOO", err)
-			panic(err)
+			fmt.Printf("Error: %v\n", err)
+			os.Exit(1)
 		}
 	},
 }
@@ -75,6 +94,8 @@ func init() {
 	config.LoadEnv()
 	rootCmd.AddCommand(cliCmd)
 	cliCmd.Flags().StringVarP((*string)(&commitType), "type", "t", string(service.CommitTypeFeat), "commit conventional")
+	cliCmd.Flags().StringVarP(&customMessage, "message", "m", customMessage, "commit conventional")
+
 	git, _ = service.NewGit()
 	api := adapter.NewOpenAiClient()
 	ctx := context.Background()
