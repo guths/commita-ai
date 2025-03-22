@@ -1,2 +1,3 @@
-git diff --unified=3 HEAD~
+git diff --cached
 
+git diff --cached --stat -> resumo por arquivo e não por linha

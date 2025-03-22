@@ -1,30 +1,38 @@
 package cmd
 
 import (
-	"fmt"
+	"context"
 
-	"github.com/guths/commita-ai/internal"
+	"github.com/guths/commita-ai/core/service"
+	"github.com/guths/commita-ai/core/usecase"
+	"github.com/guths/commita-ai/internal/adapter"
+	"github.com/guths/commita-ai/internal/config"
 	"github.com/spf13/cobra"
 )
 
-var git *internal.Git
+var commitUseCase *usecase.Summarize
+var git *service.Git
 
 var cliCmd = &cobra.Command{
 	Use:   "c",
-	Short: "Commit",
+	Short: "commit",
 	Long:  `Commit`,
 	Run: func(cmd *cobra.Command, args []string) {
-		stdout, err := git.Diff()
+		diff, err := git.Diff()
 
 		if err != nil {
 			panic(err)
 		}
 
-		fmt.Printf(string(stdout))
+		commitUseCase.Create(diff)
 	},
 }
 
 func init() {
+	config.LoadEnv()
 	rootCmd.AddCommand(cliCmd)
-	git = internal.NewGit()
+	git, _ = service.NewGit()
+	api := adapter.NewOpenAiClient()
+	ctx := context.Background()
+	commitUseCase = usecase.NewSummarize(ctx, api)
 }
