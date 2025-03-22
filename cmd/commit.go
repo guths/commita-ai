@@ -54,12 +54,14 @@ var cliCmd = &cobra.Command{
 
 		if customMessage != "" {
 			message := GetCommitMessage(commitType, customMessage)
-
+			fmt.Printf(message)
 			err = git.Commit(message)
 			if err != nil {
 				fmt.Printf("Error: %v\n", err)
 				os.Exit(1)
 			}
+
+			os.Exit(0)
 		}
 
 		diff, err := git.Diff()
