@@ -2,6 +2,7 @@ package service
 
 import (
 	"errors"
+	"fmt"
 	"os/exec"
 )
 
@@ -51,7 +52,7 @@ func (g *Git) Diff() ([]byte, error) {
 	return stdout, nil
 }
 
-func (g *Git) DiffTest() error {
+func (g *Git) IsStaged() error {
 	checkCmd := exec.Command(gitRootCommand, "diff", "--cached", "--quiet")
 	if err := checkCmd.Run(); err == nil {
 		return errors.New("no staged changes to commit")
@@ -62,10 +63,12 @@ func (g *Git) DiffTest() error {
 }
 
 func (g *Git) Commit(message string) error {
-
 	cmd := exec.Command(gitRootCommand, "commit", "-m", message)
 	if err := cmd.Run(); err != nil {
 		return err
 	}
+
+	fmt.Println("Successfully pushed xD")
+
 	return nil
 }

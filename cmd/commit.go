@@ -46,7 +46,7 @@ var cliCmd = &cobra.Command{
 			os.Exit(1)
 		}
 
-		err := git.DiffTest()
+		err := git.IsStaged()
 		if err != nil {
 			fmt.Printf("Error: %v\n", err)
 			os.Exit(1)
