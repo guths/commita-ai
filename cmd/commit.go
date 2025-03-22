@@ -22,17 +22,17 @@ var customMessage string
 func GetCommitMessage(commitType service.CommitType, summary string) string {
 	switch commitType {
 	case service.CommitTypeFeat:
-		return "✨ feat:\n\n" + summary
+		return "✨ feat:\n" + summary
 	case service.CommitTypeFix:
-		return "🐛 fix:\n\n" + summary
+		return "🐛 fix:\n" + summary
 	case service.CommitTypeChore:
-		return "🛠️ chore:\n\n" + summary
+		return "🛠️ chore:\n" + summary
 	case service.CommitTypeDocs:
-		return "📚 docs:\n\n" + summary
+		return "📚 docs:\n" + summary
 	case service.CommitTypeTest:
-		return "✅ test:\n\n" + summary
+		return "✅ test:\n" + summary
 	default:
-		return "🔧 other:\n\n" + summary
+		return "🔧 other:\n" + summary
 	}
 }
 

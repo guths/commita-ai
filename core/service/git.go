@@ -38,7 +38,6 @@ func NewGit() (*Git, error) {
 var gitRootCommand = "git"
 
 func (g *Git) Diff() ([]byte, error) {
-
 	arg1 := "diff"
 	arg2 := "--cached"
 	arg3 := "--minimal"
@@ -52,13 +51,17 @@ func (g *Git) Diff() ([]byte, error) {
 	return stdout, nil
 }
 
-func (g *Git) Commit(message string) error {
+func (g *Git) DiffTest() error {
 	checkCmd := exec.Command(gitRootCommand, "diff", "--cached", "--quiet")
 	if err := checkCmd.Run(); err == nil {
 		return errors.New("no staged changes to commit")
 	} else if exitError, ok := err.(*exec.ExitError); !ok || exitError.ExitCode() != 1 {
 		return errors.New("failed to check staged changes")
 	}
+	return nil
+}
+
+func (g *Git) Commit(message string) error {
 
 	cmd := exec.Command(gitRootCommand, "commit", "-m", message)
 	if err := cmd.Run(); err != nil {
